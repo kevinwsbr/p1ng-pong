@@ -5,6 +5,7 @@ int flag = 1, tab = 0;
 int row = 5, column = 5;
 int dX = 1, dY = 1;
 int yp;
+int yp2=2;
 int pont1=0,pont2=0;
 const int pinoPot = A5;
 int leituraA5; 
@@ -40,6 +41,14 @@ void drawPad()
   lc.setLed(0,7,yp,true);
   lc.setLed(0,7,yp+1,true);
   lc.setLed(0,7,yp+2,true);
+}
+
+void drawPad2()
+{
+
+  lc.setLed(1,0,yp2,true);
+  lc.setLed(1,0,yp2+1,true);
+  lc.setLed(1,0,yp2+2,true);
 }
 
 void drawScore()
@@ -115,6 +124,7 @@ void drawBall()
   
     if (row == 0 && dX == 1 ) {dX = -1;}
     if (row == 8 && dX == -1 ) {tab = 0; row = 0; flag *= -1;}
+    if (row == 0 && dX == 1 && (column==yp2 || column==yp2+1 || column==yp2+2)) {dX=-1;}
     if (column == 0 && dY == -1 ) {dY = 1;}
     if (column == 7 && dY == 1 ) {dY = -1;}
   }
@@ -122,6 +132,19 @@ void drawBall()
   lc.clearDisplay(0);
   lc.clearDisplay(1);
   lc.setLed(tab, row, column, true);
+}
+
+void movePad2()
+{
+  if(column<4 && yp2>0 && dY==-1)
+  {
+    yp2--;
+  }
+  if (column>4 && yp2+2<7 && dX==1)
+  {
+    yp2++;
+  }
+  delay(0);
 }
 
 void newgame()
@@ -138,7 +161,9 @@ void loop()
 {
   drawBall();
   drawScore();
-  drawPad();  
+  drawPad();
+  drawPad2();
+  movePad2();    
   /*for (int l = 0; l < 3; l++)
   {
     for (int col = 7; col >= 0; col--)
