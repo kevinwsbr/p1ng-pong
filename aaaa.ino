@@ -9,7 +9,8 @@ int yp;
 int yp2=2;
 int pont1=0,pont2=0;
 const int pinoPot = A5;
-int leituraA5; 
+int leituraA5;
+int rdom;
 LedControl lc=LedControl(12,11,10,3);
 //LedControl lc=LedControl(11,13,10,3);
 
@@ -28,13 +29,14 @@ void setup()
   lc.clearDisplay(0); 
   lc.clearDisplay(1);
   lc.clearDisplay(2);
+  randomSeed(analogRead(0));
 }
 
 void drawPad()
 {
   
   yp = analogRead(pinoPot); 
-  yp=map(yp,100,1023,0,5);
+  yp=map(yp,0,256,0,5);
   Serial.print(leituraA5); 
   Serial.println(yp); 
   Serial.println(pont2);
@@ -51,6 +53,93 @@ void drawPad2()
   lc.setLed(1,0,yp2+1,true);
   lc.setLed(1,0,yp2+2,true);
 }
+
+void clearMatrix(int pad){
+  for (int col = 7; col >= 0; col--)
+    {
+      for (int row = 0; row < 8; row++)
+      {
+        if(col == 7)
+        {
+          if(row != pad || row != pad+1 || row != pad+2)
+          {
+           lc.setLed(0,col,row,false);  
+          }
+        }else
+        {
+          lc.setLed(0,col,row,false);
+        }
+        
+      }
+    }
+}
+
+void restart()
+{
+  if(pont2t >= 5)
+    {
+      for(int i = 0; i<3;i++)
+      {
+        for (int l = 0; l < 3; l++)
+      {
+        for (int col = 7; col >= 0; col--)
+        {
+          for (int row = 0; row < 8; row++)
+          {
+            lc.setLed(0,col,row,true);
+            lc.setLed(1,col,row,true);
+          }
+        }
+      }
+  delay(25);
+    for (int l = 0; l < 3; l++)
+    {
+      for (int col = 7; col >= 0; col--)
+      {
+        for (int row = 0; row < 8; row++)
+        {
+          lc.setLed(0,col,row,false);
+          lc.setLed(1,col,row,false);
+        }
+      }
+    }
+      }
+      delay(2000);
+      newgame();
+    }
+    else if(pont1t >= 5)
+  {
+      for(int i = 0; i<3;i++)
+      {
+        for (int l = 0; l < 3; l++)
+      {
+        for (int col = 7; col >= 0; col--)
+        {
+          for (int row = 0; row < 8; row++)
+          {
+            lc.setLed(0,col,row,true);
+            lc.setLed(1,col,row,true);
+          }
+        }
+      }
+  delay(25);
+    for (int l = 0; l < 3; l++)
+    {
+      for (int col = 7; col >= 0; col--)
+      {
+        for (int row = 0; row < 8; row++)
+        {
+          lc.setLed(0,col,row,false);
+          lc.setLed(1,col,row,false);
+        }
+      }
+    }
+      }
+      delay(2000);
+      newgame2();
+  }
+}
+
 
 void drawScore()
 {
@@ -152,23 +241,39 @@ void drawBall()
     if (column == 0 && dY == -1 ) {dY = 1;}
     if (column == 7 && dY == 1 ) {dY = -1;}
   }
-  delay(50);
+  delay(100);
   lc.clearDisplay(0);
+  //clearMatrix(yp);
   lc.clearDisplay(1);
   lc.setLed(tab, row, column, true);
 }
 
 void movePad2()
-{
-  if(column<4 && yp2>0 && dY==-1)
+{/*
+  if(column<4 && yp2>1 && dY==-1)
   {
     yp2--;
   }
-  if (column>4 && yp2+2<7 && dX==1)
+  if (column>=4 && yp2+2<6 && dX==1)
   {
     yp2++;
   }
-  delay(0);
+  delay(0);*/
+  if(flag == -1)
+  {
+    yp2 = column-1;
+  }
+  //delay(200);
+}
+
+void ra()
+{
+  rdom=random(3);
+  if(rdom==1)
+  {
+   movePad2();
+  }
+  delay(100);
 }
 
 void newgame()
@@ -177,6 +282,8 @@ void newgame()
   lc.clearDisplay(0);
   row = 0;
   column= 5;
+  dX*=-1;
+  //delay(500);
   pont2=0;
   lc.clearDisplay(1);
 }
@@ -187,6 +294,8 @@ void newgame2()
   lc.clearDisplay(0);
   row = 5;
   column= 0;
+  dX*=-1;
+  //delay(500);
   pont1=0;
   lc.clearDisplay(1);
 }
@@ -196,8 +305,45 @@ void loop()
   drawBall();
   drawScore();
   drawPad();
+  ra();
   drawPad2();
-  movePad2();    
+  //restart();
+  //ra();
+  
+  
+  
+  
+  
+////////////////////RANDOM
+
+
+/*long randNumber;
+
+void setup(){
+  Serial.begin(9600);
+
+  // if analog input pin 0 is unconnected, random analog
+  // noise will cause the call to randomSeed() to generate
+  // different seed numbers each time the sketch runs.
+  // randomSeed() will then shuffle the random function.
+  randomSeed(analogRead(0));
+}
+
+void loop() {
+  // print a random number from 0 to 299
+  randNumber = random(300);
+  Serial.println(randNumber);
+
+  // print a random number from 10 to 19
+  randNumber = random(10, 20);
+  Serial.println(randNumber);
+
+  delay(50);
+}
+  
+  
+  
+  //movePad2();    
   /*for (int l = 0; l < 3; l++)
   {
     for (int col = 7; col >= 0; col--)
