@@ -11,6 +11,7 @@ int pont1=0,pont2=0;
 const int pinoPot = A5;
 int leituraA5;
 int rdom;
+int test;
 LedControl lc=LedControl(12,11,10,3);
 //LedControl lc=LedControl(11,13,10,3);
 
@@ -211,7 +212,7 @@ void drawBall()
     //if (row == 0 && dX == 1 ) {dX = -1;}
     if (row == -1 && dX == 1 ) {tab = 1; row = 7; flag *= -1;}
     if (row == 8 && dX == -1 ) {pont2++; newgame();}
-    if (row == 7 && dX == -1 && (column==yp || column==yp+1 || column==yp+2)) {dX=1;} 
+    if (row == 6 && dX == -1 && (column==yp || column==yp+1 || column==yp+2)) {dX=1;} 
     if (column == 0 && dY == -1 ) {dY = 1;}
     if (column == 7 && dY == 1 ) {dY = -1;}
   }else if(flag == -1)
@@ -237,11 +238,12 @@ void drawBall()
     //if (row == 0 && dX == 1 ) {dX = -1;}
     if (row == 8 && dX == -1 ) {tab = 0; row = 0; flag *= -1;}
     if (row == -1 && dX == 1) {pont1++; newgame2();}
-    if (row == 0 && dX == 1 && (column==yp2 || column==yp2+1 || column==yp2+2)) {dX=-1;}
+    if (row == 1 && dX == 1 && (column==yp2 || column==yp2+1 || column==yp2+2)) {dX=-1;}
+  //  if (row == 0 && dX == 1 && column == yp2+3 && dY==1) {dX=-1;} 
     if (column == 0 && dY == -1 ) {dY = 1;}
     if (column == 7 && dY == 1 ) {dY = -1;}
   }
-  delay(100);
+  delay(500);
   lc.clearDisplay(0);
   //clearMatrix(yp);
   lc.clearDisplay(1);
@@ -261,8 +263,11 @@ void movePad2(int column)
   delay(0);*/
   if(flag == -1 && dX == 1)
   {
-    yp2 = column-1;
-  }
+    if(column>0)
+    {
+      yp2 = column-1;
+    }
+      }
   //delay(200);
 }
 
@@ -270,10 +275,10 @@ void ra()
 {
   rdom=random(3);
   movePad2(column-1);
-  if(rdom==1)
+  /*if(rdom%2==0)
   {
-   movePad2(column);
-  }
+    movePad2(column-1);
+  }*/
   //delay(150);
 }
 
