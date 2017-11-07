@@ -248,7 +248,7 @@ void drawBall()
   lc.setLed(tab, row, column, true);
 }
 
-void movePad2()
+void movePad2(int column)
 {/*
   if(column<4 && yp2>1 && dY==-1)
   {
@@ -259,7 +259,7 @@ void movePad2()
     yp2++;
   }
   delay(0);*/
-  if(flag == -1)
+  if(flag == -1 && dX == 1)
   {
     yp2 = column-1;
   }
@@ -269,11 +269,12 @@ void movePad2()
 void ra()
 {
   rdom=random(3);
+  movePad2(column-1);
   if(rdom==1)
   {
-   movePad2();
+   movePad2(column);
   }
-  delay(100);
+  //delay(150);
 }
 
 void newgame()
