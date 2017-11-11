@@ -1,5 +1,6 @@
 #include "LedControl.h"
 
+int v=random(2,7);
 int pont2t=0;
 int pont1t=0;
 int flag = 1, tab = 0;
@@ -37,11 +38,11 @@ void drawPad()
 {
   
   yp = analogRead(pinoPot); 
-  yp=map(yp,0,256,0,5);
-  Serial.print(leituraA5); 
-  Serial.println(yp); 
-  Serial.println(pont2);
-  Serial.println(pont2t);
+  yp=map(yp,0,512,0,5);
+  Serial.print(leituraA5);
+  //Serial.println(yp); 
+  //Serial.println(pont2);
+  //Serial.println(pont2t);
   lc.setLed(0,7,yp,true);
   lc.setLed(0,7,yp+1,true);
   lc.setLed(0,7,yp+2,true);
@@ -211,8 +212,19 @@ void drawBall()
   
     //if (row == 0 && dX == 1 ) {dX = -1;}
     if (row == -1 && dX == 1 ) {tab = 1; row = 7; flag *= -1;}
-    if (row == 8 && dX == -1 ) {pont2++; newgame();}
-    if (row == 6 && dX == -1 && (column==yp || column==yp+1 || column==yp+2)) {dX=1;} 
+    //if (row == 8 && dX == -1 ) {pont2++; newgame();}
+    if (row == 7 && dX == -1 ) {dX = 1;}
+    /*if (row == 6 && dX == -1)
+    {
+      if (dY==1)
+      {
+        if((column==yp || column==yp+1 || column==yp+2)) {dX=1;} 
+      }
+      else
+      {
+         if((column==yp || column==yp+1 || column==yp+2)) {dX=1;} 
+      }
+    }*/
     if (column == 0 && dY == -1 ) {dY = 1;}
     if (column == 7 && dY == 1 ) {dY = -1;}
   }else if(flag == -1)
@@ -238,12 +250,23 @@ void drawBall()
     //if (row == 0 && dX == 1 ) {dX = -1;}
     if (row == 8 && dX == -1 ) {tab = 0; row = 0; flag *= -1;}
     if (row == -1 && dX == 1) {pont1++; newgame2();}
-    if (row == 1 && dX == 1 && (column==yp2 || column==yp2+1 || column==yp2+2)) {dX=-1;}
+    if (row == 1 && dX == 1)
+    {
+      ra(v); 
+       if (dY==1)
+      {
+        if((column==yp2 || column==yp2+1 || column==yp2+2)) { dX=-1;} 
+      }
+      else
+      {
+         if((column==yp2 || column==yp2+1 || column==yp2+2)) { dX=-1;} 
+      }
+    }
   //  if (row == 0 && dX == 1 && column == yp2+3 && dY==1) {dX=-1;} 
     if (column == 0 && dY == -1 ) {dY = 1;}
     if (column == 7 && dY == 1 ) {dY = -1;}
   }
-  delay(500);
+  delay(100);
   lc.clearDisplay(0);
   //clearMatrix(yp);
   lc.clearDisplay(1);
@@ -261,24 +284,24 @@ void movePad2(int column)
     yp2++;
   }
   delay(0);*/
-  if(flag == -1 && dX == 1)
+  if( dX == 1)
   {
     if(column>0)
     {
       yp2 = column-1;
     }
-      }
+    
+  }
   //delay(200);
 }
 
-void ra()
+void ra(int v)
 {
-  rdom=random(3);
-  movePad2(column-1);
-  /*if(rdom%2==0)
+  rdom=random(v);
+  if(rdom==0 || rdom == 1 && (row!=1 || row!=0 || row!=2))
   {
     movePad2(column-1);
-  }*/
+  }
   //delay(150);
 }
 
@@ -310,11 +333,12 @@ void loop()
 {
   drawBall();
   drawScore();
-  drawPad();
-  ra();
+  //drawPad();
+  v=random(2,6);
+  Serial.println(v); 
+  ra(v);
   drawPad2();
   //restart();
-  //ra();
   
   
   
