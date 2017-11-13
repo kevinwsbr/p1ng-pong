@@ -7,7 +7,7 @@ int flag = 1, tab = 0;
 int row = 5, column = 5;
 int dX = 1, dY = 1;
 int yp;
-int yp2=2;
+int yp2=3;
 int pont1=0,pont2=0;
 const int pinoPot = A5;
 int leituraA5;
@@ -36,45 +36,25 @@ void setup()
 
 void drawPad()
 {
-  
+  lc.setLed(0,0,yp,false);
+  lc.setLed(0,0,yp+1,false);
+  lc.setLed(0,0,yp-1,false);
   yp = analogRead(pinoPot); 
-  yp=map(yp,0,512,0,5);
+  yp = map(yp,0,256,1,6);
+  if( yp > 6 ) yp = 6;
+  if( yp < 1 ) yp = 1;
   Serial.print(leituraA5);
-  //Serial.println(yp); 
-  //Serial.println(pont2);
-  //Serial.println(pont2t);
-  lc.setLed(0,7,yp,true);
-  lc.setLed(0,7,yp+1,true);
-  lc.setLed(0,7,yp+2,true);
+  lc.setLed(0,0,yp,true);
+  lc.setLed(0,0,yp+1,true);
+  lc.setLed(0,0,yp-1,true);
 }
 
 void drawPad2()
 {
-
-  lc.setLed(1,0,yp2,true);
-  lc.setLed(1,0,yp2+1,true);
-  lc.setLed(1,0,yp2+2,true);
+  for( int i = -1 ; i < 2 ; ++i )
+    lc.setLed(1,7,yp2-i,true);
 }
 
-void clearMatrix(int pad){
-  for (int col = 7; col >= 0; col--)
-    {
-      for (int row = 0; row < 8; row++)
-      {
-        if(col == 7)
-        {
-          if(row != pad || row != pad+1 || row != pad+2)
-          {
-           lc.setLed(0,col,row,false);  
-          }
-        }else
-        {
-          lc.setLed(0,col,row,false);
-        }
-        
-      }
-    }
-}
 
 void restart()
 {
@@ -191,210 +171,66 @@ void drawScore()
 
 void drawBall()
 {
-  if(flag == 1){
-    if(dX == 1)
-    {
-      row--;
-    }
-    else
-    {
-      row++;
-    }
-  
-    if(dY == 1)
-    {
-      column++;
-    }
-    else
-    {
-      column--;
-    }
-  
-    //if (row == 0 && dX == 1 ) {dX = -1;}
-    if (row == -1 && dX == 1 ) {tab = 1; row = 7; flag *= -1;}
-    //if (row == 8 && dX == -1 ) {pont2++; newgame();}
-    if (row == 7 && dX == -1 ) {dX = 1;}
-    /*if (row == 6 && dX == -1)
-    {
-      if (dY==1)
-      {
-        if((column==yp || column==yp+1 || column==yp+2)) {dX=1;} 
-      }
-      else
-      {
-         if((column==yp || column==yp+1 || column==yp+2)) {dX=1;} 
-      }
-    }*/
-    if (column == 0 && dY == -1 ) {dY = 1;}
-    if (column == 7 && dY == 1 ) {dY = -1;}
-  }else if(flag == -1)
-  {
-    if(dX == 1)
-    {
-      row--;
-    }
-    else
-    {
-      row++;
-    }
-  
-    if(dY == 1)
-    {
-      column++;
-    }
-    else
-    {
-      column--;
-    }
-  
-    //if (row == 0 && dX == 1 ) {dX = -1;}
-    if (row == 8 && dX == -1 ) {tab = 0; row = 0; flag *= -1;}
-    if (row == -1 && dX == 1) {pont1++; newgame2();}
-    if (row == 1 && dX == 1)
-    {
-      ra(v); 
-       if (dY==1)
-      {
-        if((column==yp2 || column==yp2+1 || column==yp2+2)) { dX=-1;} 
-      }
-      else
-      {
-         if((column==yp2 || column==yp2+1 || column==yp2+2)) { dX=-1;} 
-      }
-    }
-  //  if (row == 0 && dX == 1 && column == yp2+3 && dY==1) {dX=-1;} 
-    if (column == 0 && dY == -1 ) {dY = 1;}
-    if (column == 7 && dY == 1 ) {dY = -1;}
+  lc.setLed( row/8 , row%8, column, false);
+  row += dX;
+  column += dY;
+  // Column variável responsável pela movimento horizontal
+  if( column == 7 || column == 0 ){
+    dY *= -1;
+  } 
+
+  if( row == 1 and dX == -1 ){
+    if( abs(column+dY-yp) <= 1 ) dX *= -1;
   }
-  delay(100);
-  lc.clearDisplay(0);
-  //clearMatrix(yp);
-  lc.clearDisplay(1);
-  lc.setLed(tab, row, column, true);
+  if( row == 14 and dX == 1 ){
+    if( abs(column+dY-yp2) <= 1 ) dX *= -1;
+  }
+  if( row == -1 ) newgame();
+  if( row == 16 ) newgame2();  
+  lc.setLed( row/8 , row%8, column, true);
 }
 
-void movePad2(int column)
-{/*
-  if(column<4 && yp2>1 && dY==-1)
-  {
-    yp2--;
-  }
-  if (column>=4 && yp2+2<6 && dX==1)
-  {
-    yp2++;
-  }
-  delay(0);*/
-  if( dX == 1 && row >= 2 && tab == 1)
-  {
-    if(column>0)
-    {
-      yp2 = column-1;
-    }
-    
-  }
-  //delay(200);
-}
-
-void ra(int v)
+void movePad2(int v)
 {
-  rdom=random(v);
-  if(rdom==0 || rdom == 1)
-  {
-    movePad2(column-1);
+  rdom = random(v);
+  lc.setLed(1,7,yp2+1,false);
+  lc.setLed(1,7,yp2-1,false);
+  if( rdom <= 1 ){
+    if( yp2 > column+dY and yp2 > 1 ) 
+      yp2--;
+    if( yp2 < column+dY and yp2 < 6 )
+      yp2++;  
   }
-  //delay(150);
 }
 
 void newgame()
 {
-  pont2t++;
   lc.clearDisplay(0);
-  row = 0;
-  column= 5;
-  dX*=-1;
-  //delay(500);
-  pont2=0;
   lc.clearDisplay(1);
+  pont2t++;
+  row = 1;
+  column= yp;
+  dX*=-1;
 }
 
 void newgame2()
 {
-  pont1t++;
   lc.clearDisplay(0);
-  row = 5;
-  column= 0;
-  dX*=-1;
-  //delay(500);
-  pont1=0;
   lc.clearDisplay(1);
+  pont1t++;
+  row = 14;
+  column= yp2;
+  dX*=-1;
 }
 
 void loop()
 {
-  drawBall();
   drawScore();
-  //drawPad();
-  v=random(1,6);
+  drawPad();
+  v=random(0,5);
   Serial.println(v); 
-  ra(v);
   drawPad2();
-  //restart();
-  
-  
-  
-  
-  
-////////////////////RANDOM
-
-
-/*long randNumber;
-
-void setup(){
-  Serial.begin(9600);
-
-  // if analog input pin 0 is unconnected, random analog
-  // noise will cause the call to randomSeed() to generate
-  // different seed numbers each time the sketch runs.
-  // randomSeed() will then shuffle the random function.
-  randomSeed(analogRead(0));
-}
-
-void loop() {
-  // print a random number from 0 to 299
-  randNumber = random(300);
-  Serial.println(randNumber);
-
-  // print a random number from 10 to 19
-  randNumber = random(10, 20);
-  Serial.println(randNumber);
-
-  delay(50);
-}
-  
-  
-  
-  //movePad2();    
-  /*for (int l = 0; l < 3; l++)
-  {
-    for (int col = 7; col >= 0; col--)
-    {
-      for (int row = 0; row < 8; row++)
-      {
-        lc.setLed(l,col,row,true);
-        delay(25);
-      }
-    }
-  }
-
-  for (int l = 0; l < 3; l++)
-  {
-    for (int col = 7; col >= 0; col--)
-    {
-      for (int row = 0; row < 8; row++)
-      {
-        lc.setLed(l,col,row,false);
-        delay(25);
-      }
-    }
-  }*/
+  drawBall();
+  delay(300);
+  movePad2(v);
 }
