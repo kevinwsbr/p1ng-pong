@@ -1,6 +1,6 @@
 #include "LedControl.h"
 
-int v=random(2,7);
+int v=random(1,5);
 int pont2t=0;
 int pont1t=0;
 int flag = 1, tab = 0;
@@ -284,7 +284,7 @@ void movePad2(int column)
     yp2++;
   }
   delay(0);*/
-  if( dX == 1)
+  if( dX == 1 && row >= 2 && tab == 1)
   {
     if(column>0)
     {
@@ -298,7 +298,7 @@ void movePad2(int column)
 void ra(int v)
 {
   rdom=random(v);
-  if(rdom==0 || rdom == 1 && (row!=1 || row!=0 || row!=2))
+  if(rdom==0 || rdom == 1)
   {
     movePad2(column-1);
   }
@@ -334,7 +334,7 @@ void loop()
   drawBall();
   drawScore();
   //drawPad();
-  v=random(2,6);
+  v=random(1,6);
   Serial.println(v); 
   ra(v);
   drawPad2();
